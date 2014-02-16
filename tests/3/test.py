@@ -17,7 +17,7 @@ class Cacheme(object, metaclass=debris.Cache):
         self.data = __debris__
 
     @classmethod
-    def _retreive(self, inits, varargs):
+    def _retreive(self, id, **kwargs):
         """
         This would be a database call...
         Likely to return a row of data

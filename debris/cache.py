@@ -36,10 +36,10 @@ class Cache(type):
 
         # substiture class
         if _.get('substitute'):
-            cls = helpers.call(_.get('substitute'))(cls, _initvars, args)
+            cls = helpers.call(_.get('substitute'))(cls, **_initvars)
 
         # namespace
-        namespace = helpers.call(_.get('namespace'), _initvars, args)
+        namespace = helpers.call(_.get('namespace'), **_initvars)
         namespace = namespace % _initvars
         
         # Must have namespace to stash
@@ -48,7 +48,7 @@ class Cache(type):
                 pass
 
             else:
-                _in_memory = helpers.call(_.get('memory'), _initvars, args)
+                _in_memory = helpers.call(_.get('memory'), **_initvars)
                 if _in_memory:
                     # check for this namespace
                     obj = debris.locale.Memory.get(namespace)
@@ -57,12 +57,12 @@ class Cache(type):
 
                 # get the data via the "retreive" method
                 # which is required to be an attribute of the class, or a callable
-                data = helpers.callattr(cls, _.get('retreive'), _initvars, args)
+                data = helpers.callattr(cls, _.get("retreive", "__assemble__"), **_initvars)
 
                 obj = cls.__new__(cls, *args, **kwargs)
                 obj.__init__(__debris__=data, *args, **kwargs)
                 if _.get('stash') is not False:
-                    pile = helpers.callattr(obj, _.get('locale'), _initvars, args)
+                    pile = helpers.callattr(obj, _.get('locale'), **_initvars)
                     if type(pile) is str:
                         pile = getattr(debris, pile)
                     if pile:
