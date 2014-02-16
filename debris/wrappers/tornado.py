@@ -1,7 +1,7 @@
 import functools
 
 import debris
-from .debris import helpers
+from debris import helpers
 
 
 def _replace_finish(handler, namespace, locale):
