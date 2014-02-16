@@ -8,13 +8,16 @@ class Object(type):
     def __call__(cls, *args, **kwargs):
         """Get any piece of data through a series of locations
         """
+
+        _ = getattr(cls, "__debris__", {})
+
         if len(kwargs) > 0:
+            if _.get('substitute') or hasattr(cls, '__substitute__'):
+                cls = helpers.callattr(cls, _.get('substitute', '__substitute__'), **kwargs)
             obj = cls.__new__(cls, *args, **kwargs)
             obj.__init__(*args, **kwargs)
             # STASH HERE...
             return obj
-
-        _ = getattr(cls, "__debris__", {})
 
         # Build the collection of initializing variables
         # this will be used for varius callable requests
@@ -80,7 +83,10 @@ class Object(type):
                 args[_i] = data.pop(key)
                 # substiture class w/ known data
                 _kwargs.update(data)
-                cls = helpers.callattr(_ocls, _.get('substitute', '__substitute__'), **_kwargs) if _.get('substitute', '__substitute__') else _ocls
+                # remove duplicated
+                [_kwargs.pop(k) for k in insp.args if k in _kwargs]
+                # substitute class (if needed)
+                cls = helpers.callattr(_ocls, _.get('substitute', '__substitute__'), **_kwargs) if _.get('substitute', '__substitute__') or hasattr(cls, '__substitute__') else _ocls
                 # construct the class
                 obj = cls.__new__(cls, *args, **data)
                 obj.__init__(*args, **data)
@@ -112,10 +118,14 @@ class Object(type):
                 # get the data via the "retreive" method
                 # which is required to be an attribute of the class, or a callable
                 data = helpers.callattr(cls, _.get("retreive", "__assemble__"), **_kwargs)
+                _kwargs.update(data)
 
                 # substiture class w/ known data
-                if _.get('substitute'):
-                    cls = helpers.callattr(cls, _.get('substitute', '__substitute__'), _kwargs, data)
+                if _.get('substitute') or hasattr(cls, '__substitute__'):
+                    cls = helpers.callattr(cls, _.get('substitute', '__substitute__'), **data)
+
+                # remove duplicated
+                [data.pop(k) for k in insp.args if k in data]
 
                 obj = cls.__new__(cls, *args, **data)
                 obj.__init__(*args, **data)
@@ -135,6 +145,8 @@ class Object(type):
 
         # namespace was not found true therfore
         # construct the object normally, dont stash it.
+        if _.get('substitute') or hasattr(cls, '__substitute__'):
+            cls = helpers.callattr(cls, _.get('substitute', '__substitute__'), **kwargs)
         obj = cls.__new__(cls, *args, **kwargs)
         obj.__init__(*args, **kwargs)
         return obj
