@@ -10,7 +10,7 @@ services:
   - redis
 before_script:
   - pip install Tornado
-  - nohup bash -c "hpython -m tests.server &"
+  - nohup bash -c "python -m tests.server &"
   - sleep 4
 script:
   - python -m unittest discover -s tests
