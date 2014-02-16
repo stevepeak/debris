@@ -80,3 +80,10 @@ $ curl http://localhost:8888/ -w %{time_total}s
 0.098s
 ```
 Your second request was cached in memory and was able to return the request results very quickly.
+
+## Roadmap
+- Switch to a `Debris` asset class container for all cached data.
+    - Set the `expiration`,  `callback` and more preferences
+- Support for storing the cache results in other databases for data redundancy.
+    - Known already as `locales` inc. support for `postgres`, `redis` and `mongodb`
+- Create methods to clear the stashed assets through request handlers and system events
