@@ -97,34 +97,40 @@ class Object(type):
         # Single Method
         # ------------------
         else:
-            namespace = namespace % nsv
-            if _in_memory:
-                # check for this namespace
-                obj = debris.locale.Memory.get(namespace)
-                if obj:
-                    return obj
+            try:
+                namespace = namespace % nsv
+            except KeyError:
+                # continue to construct
+                pass
+            else:
+                if _in_memory:
+                    # check for this namespace
+                    obj = debris.locale.Memory.get(namespace)
+                    if obj:
+                        return obj
 
-            # get the data via the "retreive" method
-            # which is required to be an attribute of the class, or a callable
-            data = helpers.callattr(cls, _.get("retreive", "__assemble__"), **_kwargs)
+                # get the data via the "retreive" method
+                # which is required to be an attribute of the class, or a callable
+                data = helpers.callattr(cls, _.get("retreive", "__assemble__"), **_kwargs)
 
-            # substiture class w/ known data
-            if _.get('substitute'):
-                cls = helpers.callattr(cls, _.get('substitute', '__substitute__'), _kwargs, data)
+                # substiture class w/ known data
+                if _.get('substitute'):
+                    cls = helpers.callattr(cls, _.get('substitute', '__substitute__'), _kwargs, data)
 
-            obj = cls.__new__(cls, *args, **data)
-            obj.__init__(*args, **data)
-            if _.get('stash') is not False:
-                pile = helpers.callattr(obj, _.get('locale'), **_kwargs)
-                if type(pile) is str:
-                    pile = getattr(debris, pile)
-                if pile:
-                    if _.get('stash') is not True:
-                        data = helpers.callattr(obj, _.get('stash'))
-                    pile.stash(data, namespace)
-            if _in_memory:
-                debris.locale.Memory.set(namespace, obj)
-            return obj
+                obj = cls.__new__(cls, *args, **data)
+                obj.__init__(*args, **data)
+                if _.get('stash') is not False:
+                    pile = helpers.callattr(obj, _.get('locale'), **_kwargs)
+                    if type(pile) is str:
+                        pile = getattr(debris, pile)
+                    if pile:
+                        if _.get('stash') is not True:
+                            data = helpers.callattr(obj, _.get('stash'))
+                        pile.stash(data, namespace)
+                if _in_memory:
+                    debris.locale.Memory.set(namespace, obj)
+                return obj
+
   
 
         # namespace was not found true therfore
