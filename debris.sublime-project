@@ -4,7 +4,7 @@
         {
             "path": "~/Documents/stevepeak/debris",
             "file_exclude_patterns": [".pyc", "*.sublime-workspace"],
-            "folder_exclude_patterns": ["venv", "*.egg-info", "__pycache__"]
+            "folder_exclude_patterns": ["venv", "*.egg-info", "__pycache__", "dist"]
         }
     ],
     "settings":

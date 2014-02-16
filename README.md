@@ -10,7 +10,7 @@
 import debris
 
 class User(object):
-    __metaclass__ = debris.Cache
+    __metaclass__ = debris.Object
     __debris__ = {
         "namespace": "%(clsname)s.%(id)s",
         "retreive": "_retreive"
@@ -57,7 +57,7 @@ import time
 import debris
 
 class MainHandler(tornado.web.RequestHandler):
-    @debris.tornado.stash()
+    @debris.tornado.request()
     def get(self):
         # example request that takes some time()
         time.sleep(5)       
@@ -84,6 +84,8 @@ Your second request was cached in memory and was able to return the request resu
 ## Roadmap
 - Switch to a `Debris` asset class container for all cached data.
     - Set the `expiration`,  `callback` and more preferences
+    - Expritation may be based on `eta`, `date` or `size`
 - Support for storing the cache results in other databases for data redundancy.
     - Known already as `locales` inc. support for `postgres`, `redis` and `mongodb`
 - Create methods to clear the stashed assets through request handlers and system events
+- Metrics on cache size, requests and frequency

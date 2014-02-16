@@ -3,7 +3,7 @@ import debris
 
 DATABASE = [dict(city="Madison", state="WI")]
 
-class Cacheme(object, metaclass=debris.Cache):
+class Cacheme(object, metaclass=debris.Object):
     __debris__ = {
         "namespace": "%(clsname)s.%(id)s", # default "%(clsname)s.[args[]]"
         "stash": True, # default True, callable? return the data to stash
@@ -12,12 +12,12 @@ class Cacheme(object, metaclass=debris.Cache):
         "retreive": "_retreive", # classmethods to get data
         "memory": True # default True, use the one in memory if found (F) -or- rebuild a new object (T)
     }
-    def __init__(self, id, __debris__=None):
+    def __init__(self, id, **data):
         self.id = id
-        self.data = __debris__
+        self.data = data
 
     @classmethod
-    def _retreive(self, id, **kwargs):
+    def _retreive(self, id):
         """
         This would be a database call...
         Likely to return a row of data

@@ -16,13 +16,13 @@ def _replace_finish(handler, namespace, locale):
         handler.finish = _rp
     handler.finish = finish
 
-def stash(namespace=None, locale=None):
+def request(namespace=None, locale=None):
     """
     Wrapper for tornado requests. Example
 
     ```
     class MainHandler(tornado.web.RequestHandler):
-        @debris.tornado.stash("home-page", debris.locale.MEMORY)
+        @debris.tornado.request("home-page", debris.locale.MEMORY)
         def get(self):
             self.write("Hello, world")
 
