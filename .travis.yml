@@ -11,4 +11,5 @@ before_script:
   - nohup bash -c "python -m tests.server &"
   - sleep 4
 script:
-  - python -m unittest discover -s tests
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.3* ]]; then python -m unittest discover -s tests/3/; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7* ]]; then python -m unittest discover -s tests/2/; fi

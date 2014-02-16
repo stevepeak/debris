@@ -13,7 +13,7 @@ p:
 	. venv/bin/activate; python
 
 test:
-	. venv/bin/activate; python -m unittest discover -s tests
+	. venv/bin/activate; python -m unittest discover -s tests/2
 
 update:
 	. venv/bin/activate; pip install -r requirements.txt --upgrade
