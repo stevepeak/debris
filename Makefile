@@ -6,9 +6,6 @@ open:
 watch:
 	watchr Watch
 
-compare:
-	hub compare $(shell heroku releases | grep Deploy | head -1 | python -c "import sys, re;print re.search('v\d+\s+Deploy\s+(\w+)', sys.stdin.read()).groups()[0]")...master
-
 p:
 	. venv/bin/activate; python
 
