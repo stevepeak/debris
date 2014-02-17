@@ -34,7 +34,7 @@ def request(namespace=None, locale=None):
         def _stash(self, *a, **k):
             _namespace = helpers.call(namespace)
             if _namespace:
-                _locale = helpers.call(locale, self, namespace) or debris.locale.Memory
+                _locale = helpers.call(locale, self, namespace) or debris.locale.memory
                 # this request is cacheable
                 if _locale:
                     data = _locale.get(namespace)
