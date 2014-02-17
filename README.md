@@ -90,7 +90,7 @@ Your second request was cached in memory and was able to return the request resu
     - Set the `expiration`,  `callback` and more preferences
     - Expritation may be based on `eta`, `date` or `size`
 - Support for storing the cache results in other databases for data redundancy.
-    - Known already as `locales` inc. support for `memcache`, `redis` and `mongodb`
+    - Known already as `cashiers` inc. support for `memcache`, `redis` and `mongodb`
 - Create methods to clear the stashed assets through request handlers and system events
 - Metrics on cache size, requests and frequency
 - **Golden Rules** what all assets will comply with before being cached

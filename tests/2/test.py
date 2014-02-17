@@ -7,7 +7,7 @@ class Cacheme(object):
         "namespace": "namespace", # default "%(clsname)s.[args[]]"
         "stash": True, # default True, callable? return the data to stash
         "substitute": False, # default False
-        "locale": None, # default None, where to store the data
+        "cashier": None, # default None, where to store the data
         "retreive": "_retreive", # classmethods to get data
         "memory": True # default True, use the one in memory if found (F) -or- rebuild a new object (T)
     }

@@ -9,6 +9,9 @@ watch:
 p:
 	. venv/bin/activate; python
 
+server:
+	. venv/bin/activate; honcho run python -m tests.server
+
 test:
 	. venv/bin/activate; python -m unittest discover -s tests/2
 

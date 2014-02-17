@@ -7,6 +7,7 @@ from debris.asset import Asset
 
 class memcache:
     STOCKPILE = {}
+    SETTINGS = {}
     _CASHIER = None
 
     @classmethod
@@ -61,3 +62,7 @@ class memcache:
     @classmethod
     def stats(self, key=None):
         return self._CASHIER.stats(key)
+
+    @classmethod
+    def default(self, **settings):
+        self.SETTINGS.update(settings)

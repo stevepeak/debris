@@ -4,6 +4,7 @@ from debris.asset import Asset
 
 
 class memory:
+    SETTINGS = {}
     STOCKPILE = {}
 
     @classmethod
@@ -49,3 +50,7 @@ class memory:
     @classmethod
     def stats(self, key):
         pass
+
+    @classmethod
+    def default(self, **settings):
+        self.SETTINGS.update(settings)
