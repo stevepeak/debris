@@ -2,7 +2,12 @@
 
 > Recycling your objects and web requests with ease.
 
-## :octopus: Objects
+## Install
+`pip install debris`
+
+## Usage
+
+### :octopus: Objects
 
 > Cache objects to speed up construction.
 
@@ -38,17 +43,16 @@ True
 ```
 
 
-## :candy: Wrapping Web Requests
+### :candy: Wrapping Web Requests
 
 > Decorate your web request handlers for quicker request times.
 
-#### Usage
 Use [python decorators](https://wiki.python.org/moin/PythonDecorators) to stash your request results. This process can **dramatically** speed up your web server requests by storing the results for later use, instead of rendering them on the fly each request.
 
-#### Supported Frameworks
+**Supported Frameworks**
 - [Tornado Web](https://github.com/facebook/tornado)
 
-### via [Tornado Web](https://github.com/facebook/tornado)
+#### Wrapping [Tornado Web](https://github.com/facebook/tornado)
 ```python
 import tornado.ioloop
 import tornado.web
