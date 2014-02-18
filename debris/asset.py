@@ -23,4 +23,4 @@ class Asset(object):
 
     @classmethod
     def foreign(self, data):
-        self.data = data
+        return Asset(data)
