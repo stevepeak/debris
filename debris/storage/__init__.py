@@ -1,8 +1,8 @@
-from .memory import memory
+from debris.storage.memory import memory
 
 try:
     import bmemcached
-    from .memcache import memcache
+    from debris.storage.memcache import memcache
 except ImportError:
     memcache = None
 
