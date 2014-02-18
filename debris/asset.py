@@ -16,8 +16,11 @@ class Asset(object):
         pass
 
     def dump(self):
-        pass
+        # this will change in the very, very near future
+        # to be a small collection of data that includes the
+        # cache tags
+        return self.data
 
     @classmethod
     def foreign(self, data):
-        pass
+        self.data = data
