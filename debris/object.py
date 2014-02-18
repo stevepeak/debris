@@ -62,7 +62,7 @@ class Object(type):
                 ns = namespace % nsv
                 # check cache
                 if _in_memory:
-                    obj = debris.cashier.memory.get(namespace)
+                    obj = debris.storage.memory.get(namespace)
                     if obj:
                         # found in cache, next!
                         _got.append(obj)
@@ -92,7 +92,7 @@ class Object(type):
                 obj.__init__(*args, **data)
                 # put in memory
                 if _in_memory:
-                    debris.cashier.memory.set(_need_ns[i], obj)
+                    debris.storage.memory.set(_need_ns[i], obj)
                 # add to the _got[s]!
                 _got.append(obj)
 
@@ -111,7 +111,7 @@ class Object(type):
             else:
                 if _in_memory:
                     # check for this namespace
-                    obj = debris.cashier.memory.get(namespace)
+                    obj = debris.storage.memory.get(namespace)
                     if obj:
                         return obj
 
@@ -130,7 +130,7 @@ class Object(type):
                 obj = cls.__new__(cls, *args, **data)
                 obj.__init__(*args, **data)
                 if _.get('stash') is not False:
-                    pile = helpers.callattr(obj, _.get('cashier'), **_kwargs)
+                    pile = helpers.callattr(obj, _.get('storage'), **_kwargs)
                     if type(pile) is str:
                         pile = getattr(debris, pile)
                     if pile:
@@ -138,7 +138,7 @@ class Object(type):
                             data = helpers.callattr(obj, _.get('stash'))
                         pile.stash(data, namespace)
                 if _in_memory:
-                    debris.cashier.memory.set(namespace, obj)
+                    debris.storage.memory.set(namespace, obj)
                 return obj
 
   

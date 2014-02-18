@@ -6,11 +6,11 @@ try:
 except ImportError:
     pass
 
-def use(cashier):
-    cashier = cashier.lower()
-    if cashier == "memory":
+def use(name):
+    name = name.lower()
+    if name == "memory":
         return memory
-    elif cashier == "memcache":
+    elif name == "memcache":
         return memcache
     else:
-        raise TypeError("Request debris.cashier does not exist.")
+        raise TypeError("Request debris.storage does not exist.")
