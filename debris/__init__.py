@@ -1,11 +1,11 @@
 version = VERSION = __version__ = '0.0.2'
 
-import cashier
-from .object import Object
+from debris import cashier
+from debris.object import Object
 
 try:
     import tornado.web
-    from .wrappers import tornado
+    from debris.wrappers import tornado
 except:
     # no tornado package found...
     pass
