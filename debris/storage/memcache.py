@@ -13,7 +13,7 @@ class memcache:
     @classmethod
     def setup(self, servers=None, username=None, password=None):
         if servers is None:
-            servers = os.getenv('MEMCACHE_SERVERS', '').split('.')
+            servers = os.getenv('MEMCACHE_SERVERS', '').split(',')
             username = os.getenv('MEMCACHE_USERNAME')
             password = os.getenv('MEMCACHE_PASSWORD')
 
