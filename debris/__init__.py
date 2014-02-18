@@ -1,6 +1,6 @@
 version = VERSION = __version__ = '0.0.2'
 
-from debris import storage
+from debris.storage import storage
 from debris.object import Object
 
 try:

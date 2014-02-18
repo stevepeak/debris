@@ -4,13 +4,17 @@ try:
     import bmemcached
     from .memcache import memcache
 except ImportError:
-    pass
+    memcache = None
 
-def use(name):
-    name = name.lower()
-    if name == "memory":
-        return memory
-    elif name == "memcache":
-        return memcache
-    else:
-        raise TypeError("Request debris.storage does not exist.")
+class storage:
+    memory = memory
+    memcache = memcache
+    @classmethod
+    def use(self, name):
+        name = name.lower()
+        if name == "memory":
+            return memory
+        elif name == "memcache":
+            return memcache
+        else:
+            raise TypeError("Request debris.storage does not exist.")
