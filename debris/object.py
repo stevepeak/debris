@@ -11,14 +11,6 @@ class Object(type):
 
         _ = getattr(cls, "__debris__", {})
 
-        if len(kwargs) > 0:
-            if _.get('substitute') or hasattr(cls, '__substitute__'):
-                cls = helpers.callattr(cls, _.get('substitute', '__substitute__'), **kwargs)
-            obj = cls.__new__(cls, *args, **kwargs)
-            obj.__init__(*args, **kwargs)
-            # STASH HERE...
-            return obj
-
         # Build the collection of initializing variables
         # this will be used for varius callable requests
         _kwargs = {}
@@ -40,6 +32,15 @@ class Object(type):
         namespace = helpers.callattr(cls, _.get('namespace', "__namespace__"), **_kwargs)
         nsv = {"clsname": cls.__name__}
         nsv.update(_kwargs)
+
+        if len(kwargs) > 0:
+            if _.get('substitute') or hasattr(cls, '__substitute__'):
+                cls = helpers.callattr(cls, _.get('substitute', '__substitute__'), **kwargs)
+            obj = cls.__new__(cls, *args, **kwargs)
+            obj.__init__(*args, **kwargs)
+            if _in_memory:
+                debris.storage.memory.set(namespace % nsv, obj)
+            return obj
 
         # ------------------
         # Multi Method

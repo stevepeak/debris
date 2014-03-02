@@ -32,7 +32,7 @@ class memcache:
 
     @classmethod
     def set(self, key, data, **kwargs):
-        self._CASHIER.set(key, Asset(data, **kwargs).dump())
+        self._CASHIER.set(str(key), Asset(data, **kwargs).dump())
 
     @classmethod
     def keys(self, search=None):

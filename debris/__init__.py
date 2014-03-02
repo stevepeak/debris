@@ -1,4 +1,4 @@
-version = VERSION = __version__ = '0.0.2'
+version = VERSION = __version__ = '0.0.3'
 
 from debris.storage import storage
 from debris.object import Object
