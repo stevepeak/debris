@@ -34,6 +34,12 @@ class Object(type):
         nsv.update(_kwargs)
 
         if len(kwargs) > 0:
+            if _in_memory:
+                # memory is always used, even when arguments are provided.
+                # the concept is that under the namespace, the objects are always the same.
+                obj = debris.storage.memory.get(namespace)
+                if obj:
+                    return obj
             if _.get('substitute') or hasattr(cls, '__substitute__'):
                 cls = helpers.callattr(cls, _.get('substitute', '__substitute__'), **kwargs)
             obj = cls.__new__(cls, *args, **kwargs)
