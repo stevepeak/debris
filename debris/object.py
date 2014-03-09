@@ -34,7 +34,7 @@ class Object(type):
         nsv.update(_kwargs)
 
         if len(kwargs) > 0:
-            if _in_memory:
+            if _in_memory and namespace:
                 # memory is always used, even when arguments are provided.
                 # the concept is that under the namespace, the objects are always the same.
                 obj = debris.storage.memory.get(namespace)
@@ -44,7 +44,7 @@ class Object(type):
                 cls = helpers.callattr(cls, _.get('substitute', '__substitute__'), **kwargs)
             obj = cls.__new__(cls, *args, **kwargs)
             obj.__init__(*args, **kwargs)
-            if _in_memory:
+            if namespace and _in_memory:
                 debris.storage.memory.set(namespace % nsv, obj)
             return obj
 
@@ -112,7 +112,7 @@ class Object(type):
         else:
             try:
                 namespace = namespace % nsv
-            except KeyError:
+            except Exception:
                 # continue to construct
                 pass
             else:
@@ -125,6 +125,8 @@ class Object(type):
                 # get the data via the "retreive" method
                 # which is required to be an attribute of the class, or a callable
                 data = helpers.callattr(cls, _.get("retreive", "__assemble__"), **_kwargs)
+                if type(data) is not dict:
+                    data = {}
                 _kwargs.update(data)
 
                 # substiture class w/ known data
@@ -143,8 +145,9 @@ class Object(type):
                     if pile:
                         if _.get('stash') is not True:
                             data = helpers.callattr(obj, _.get('stash'))
-                        pile.stash(data, namespace)
-                if _in_memory:
+                        if namespace:
+                            pile.stash(data, namespace)
+                if _in_memory and namespace:
                     debris.storage.memory.set(namespace, obj)
                 return obj
 
