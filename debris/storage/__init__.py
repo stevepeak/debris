@@ -1,20 +1,17 @@
-from debris.storage.memory import memory
+from debris.storage.memory import Memory
+from debris.storage.memcache import Memcache
 
-try:
-    import bmemcached
-    from debris.storage.memcache import memcache
-except ImportError:
-    memcache = None
 
 class storage:
-    memory = memory
-    memcache = memcache
+    memory = Memory()
+    memcache = Memcache()
+
     @classmethod
     def use(self, name):
         name = name.lower()
         if name == "memory":
-            return memory
+            return self.memory
         elif name == "memcache":
-            return memcache
+            return self.memcache
         else:
             raise TypeError("Request debris.storage does not exist.")

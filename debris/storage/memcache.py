@@ -1,68 +1,40 @@
-import re
 import os
-import bmemcached
 
 from debris.asset import Asset
 
 
-class memcache:
-    STOCKPILE = {}
-    SETTINGS = {}
-    _CASHIER = None
+class Memcache(object):
+    def __init__(self, servers=None, username=None, password=None):
+        try:
+            import bmemcached
+        except ImportError:
+            self._bank = None
+        else:
+            if servers is None:
+                servers = os.getenv('MEMCACHE_SERVERS', 'localhost:11211').split(',')
+                username = os.getenv('MEMCACHE_USERNAME')
+                password = os.getenv('MEMCACHE_PASSWORD')
 
-    @classmethod
-    def setup(self, servers=None, username=None, password=None):
-        if servers is None:
-            servers = os.getenv('MEMCACHE_SERVERS', '').split(',')
-            username = os.getenv('MEMCACHE_USERNAME')
-            password = os.getenv('MEMCACHE_PASSWORD')
+            assert type(servers) is list
 
-        assert type(servers) is list
+            self._bank = bmemcached.Client(servers, username, password)
 
-        self._CASHIER = bmemcached.Client(servers, username, password)
-
-    @classmethod
     def get(self, *keys):
-        if len(keys) > 0:
-            assets = self._CASHIER.get_multi(keys)
-            return [Asset.foreign(data).data for data in assets]
+        if len(keys) > 1:
+            assets = self._bank.get_multi(keys)
+            return [Asset.foreign(assets[key]).data for key in assets]
 
         elif len(keys) == 1:
-            return Asset.foreign(self._CASHIER.get(keys[0])).data
+            return Asset.foreign(self._bank.get(keys[0])).data
 
-    @classmethod
     def set(self, key, data, **kwargs):
-        self._CASHIER.set(str(key), Asset(data, **kwargs).dump())
+        return self._bank.set(str(key), Asset(data, **kwargs).dump())
 
-    @classmethod
-    def keys(self, search=None):
-        if search:
-            keys = self.STOCKPILE.keys()
-            rc = re.compile(search)
-            return [key for key in keys if re.search(rc, key, re.I)]
-        else:
-            return self.STOCKPILE.keys()
+    def remove(self, *keys):
+        if keys[0] == '*':
+            self._bank.flush_all()
+        for key in keys:
+            self._bank.delete(key)
 
-    @classmethod
-    def remove(self, key, **reasons):
-        if key == '*':
-            return self._CASHIER.flush_all()
-        elif key in self.STOCKPILE:
-            pass
-        return False
-
-    @classmethod
-    def empty(self, tags, **reasons):
-        """Destroy Assets based on the tags
-        provide additional `**reasons` to inform
-        the assets why they will be destroyed
-        """
-        pass
-
-    @classmethod
-    def stats(self, key=None):
-        return self._CASHIER.stats(key)
-
-    @classmethod
-    def default(self, **settings):
-        self.SETTINGS.update(settings)
+    def stats(self):
+        return self._bank.stats()

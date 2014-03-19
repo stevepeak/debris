@@ -6,8 +6,9 @@ python:
 services: 
   - postgres
   - redis
+  - memcached
 before_script:
-  - pip install Tornado
+  - pip install Tornado bmemcached
   - nohup bash -c "python -m tests.server &"
   - sleep 4
 script:
