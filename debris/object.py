@@ -125,8 +125,15 @@ class Object(type):
                 # get the data via the "retreive" method
                 # which is required to be an attribute of the class, or a callable
                 data = helpers.callattr(cls, _.get("retreive", "__assemble__"), **_kwargs)
-                if type(data) is not dict:
+
+                # no assemble method (will return "__assemble__") so default to empty dict
+                if data == '__assemble__':
                     data = {}
+
+                # no data found. Lookup Error
+                elif not data:
+                    raise LookupError()
+
                 _kwargs.update(data)
 
                 # substiture class w/ known data
