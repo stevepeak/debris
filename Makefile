@@ -9,11 +9,10 @@ watch:
 p:
 	. venv/bin/activate; python
 
-server:
-	. venv/bin/activate; honcho run python -m tests.server
-
 test:
-	. venv/bin/activate; python -m unittest discover -s tests/2
+	. venv/bin/activate; pip uninstall -y debris
+	. venv/bin/activate; python setup.py --quiet install
+	. venv/bin/activate; nosetests --with-coverage --cover-package=debris --cover-html --cover-html-dir=coverage_html_report
 
 update:
 	. venv/bin/activate; pip install -r requirements.txt --upgrade

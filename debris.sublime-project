@@ -1,27 +1,38 @@
 {
-    "folders":
-    [
-        {
-            "path": "~/Documents/stevepeak/debris",
-            "file_exclude_patterns": [".pyc", "*.sublime-workspace"],
-            "folder_exclude_patterns": ["venv", "*.egg-info", "__pycache__", "dist"]
-        }
-    ],
-    "settings":
+  "folders": [
     {
-        "translate_tabs_to_spaces": true,
-        "detect_indentation": true,
-        "indent_to_bracket": true,
-        "ensure_newline_at_eof_on_save": true
-    },
-    "build_systems":
-    [
-        {
-            "name": "Run Python",
-            "selector": "source.python",
-            "working_dir": "$project_path",
-            "shell": true,
-            "cmd": ["make test"]
-        }
-    ]
+      "path": "~/Documents/stevepeak/debris",
+      "file_exclude_patterns": [
+        ".pyc",
+        "LICENSE",
+        "*.sublime-workspace",
+        ".coverage"
+      ],
+      "folder_exclude_patterns": [
+        "venv",
+        "coverage_html_report",
+        "*.egg-info",
+        "__pycache__",
+        "dist",
+        "build"
+      ]
+    }
+  ],
+  "settings": {
+    "translate_tabs_to_spaces": true,
+    "detect_indentation": true,
+    "indent_to_bracket": true,
+    "ensure_newline_at_eof_on_save": true
+  },
+  "build_systems": [
+    {
+      "name": "Run Python",
+      "selector": "source.python",
+      "working_dir": "$project_path",
+      "shell": true,
+      "cmd": [
+        "make test"
+      ]
+    }
+  ]
 }

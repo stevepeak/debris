@@ -1,7 +1,7 @@
 version = VERSION = __version__ = '0.0.3'
 
-from debris.storage import storage
 from debris.object import Object
+from debris.storage import banks
 
 try:
     import tornado.web

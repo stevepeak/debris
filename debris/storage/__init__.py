@@ -2,7 +2,7 @@ from debris.storage.memory import Memory
 from debris.storage.memcache import Memcache
 
 
-class storage:
+class banks:
     memory = Memory()
     memcache = Memcache()
 
@@ -14,4 +14,4 @@ class storage:
         elif name == "memcache":
             return self.memcache
         else:
-            raise TypeError("Request debris.storage does not exist.")
+            raise TypeError("Requested debris bank does not exist.")

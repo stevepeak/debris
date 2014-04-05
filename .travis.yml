@@ -2,15 +2,13 @@ language: python
 python:
   - 2.7
   - pypy
-  - 3.3
 services: 
   - postgres
   - redis
   - memcached
 before_script:
-  - pip install Tornado python-binary-memcached
-  - nohup bash -c "python -m tests.server &"
-  - sleep 4
+  - pip install Tornado python-binary-memcached coveralls
 script:
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.3* ]]; then python -m unittest discover -s tests/3/; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.7* ]]; then python -m unittest discover -s tests/2/; fi
+  - coverage run -m unittest discover -s tests
+after_success:
+  coveralls

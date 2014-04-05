@@ -37,7 +37,7 @@ class Object(type):
             if _in_memory and namespace:
                 # memory is always used, even when arguments are provided.
                 # the concept is that under the namespace, the objects are always the same.
-                obj = debris.storage.memory.get(namespace)
+                obj = debris.banks.memory.get(namespace)
                 if obj:
                     return obj
             if _.get('substitute') or hasattr(cls, '__substitute__'):
@@ -45,7 +45,7 @@ class Object(type):
             obj = cls.__new__(cls, *args, **kwargs)
             obj.__init__(*args, **kwargs)
             if namespace and _in_memory:
-                debris.storage.memory.set(namespace % nsv, obj)
+                debris.banks.memory.set(namespace % nsv, obj)
             return obj
 
         # ------------------
@@ -69,7 +69,7 @@ class Object(type):
                 ns = namespace % nsv
                 # check cache
                 if _in_memory:
-                    obj = debris.storage.memory.get(namespace)
+                    obj = debris.banks.memory.get(namespace)
                     if obj:
                         # found in cache, next!
                         _got.append(obj)
@@ -99,7 +99,7 @@ class Object(type):
                 obj.__init__(*args, **data)
                 # put in memory
                 if _in_memory:
-                    debris.storage.memory.set(_need_ns[i], obj)
+                    debris.banks.memory.set(_need_ns[i], obj)
                 # add to the _got[s]!
                 _got.append(obj)
 
@@ -118,7 +118,7 @@ class Object(type):
             else:
                 if _in_memory:
                     # check for this namespace
-                    obj = debris.storage.memory.get(namespace)
+                    obj = debris.banks.memory.get(namespace)
                     if obj:
                         return obj
 
@@ -155,7 +155,7 @@ class Object(type):
                         if namespace:
                             pile.stash(data, namespace)
                 if _in_memory and namespace:
-                    debris.storage.memory.set(namespace, obj)
+                    debris.banks.memory.set(namespace, obj)
                 return obj
 
   

@@ -4,7 +4,7 @@ import debris
 from debris import helpers
 
 
-def _replace_finish(handler, namespace, storage):
+def _replace_finish(handler, namespace, bank):
     _rp = handler.finish
     def finish(chunk):
         status = handler.get_status()
@@ -12,17 +12,17 @@ def _replace_finish(handler, namespace, storage):
         _rp(chunk)
         # now stash it
         if status == 200:
-            storage.set(namespace, chunk)
+            bank.set(namespace, chunk)
         handler.finish = _rp
     handler.finish = finish
 
-def request(namespace=None, storage=None, debug=False):
+def request(namespace=None, bank=None, debug=False):
     """
     Wrapper for tornado requests. Example
 
     ```
     class MainHandler(tornado.web.RequestHandler):
-        @debris.tornado.request("home-page", storage=debris.storage.memory)
+        @debris.tornado.request("home-page", bank=debris.banks.memory)
         def get(self):
             self.write("Hello, world")
 
@@ -36,7 +36,7 @@ def request(namespace=None, storage=None, debug=False):
                 # easy way to skip the stash
                 _namespace = helpers.call(namespace)
                 if _namespace:
-                    _storage = helpers.call(storage, self, namespace) or debris.storage.memory
+                    _storage = helpers.call(bank, self, namespace) or debris.banks.memory
                     # this request is cacheable
                     if _storage:
                         data = _storage.get(namespace)
