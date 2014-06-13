@@ -1,6 +1,6 @@
 .pyc
 *.egg-info
-debris.sublime-workspace
+*.sublime-*
 venv
 Watch
 build
