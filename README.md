@@ -16,24 +16,10 @@ import debris
 
 class User(object):
     __metaclass__ = debris.Object
-<<<<<<< HEAD
     def __init__(self, id, **data):
         self.id = id
         self.name = data['name']
         self.email = data['email']
-=======
-    __debris__ = {
-        "namespace": "%(clsname)s.%(id)s"
-    }
-    def __init__(self, id, __debris__=None):
-        self.id = id
-        self.data = __debris__
-
-    @classmethod
-    def __assemble__(self, id):
-        # this method should hit the database for the data
-        return database.get("select * from users where id=%s;", id)
->>>>>>> FETCH_HEAD
 ```
 
 Your **User** data is store in a database, at least I hope so. Traditionally, doing a simple
