@@ -7,9 +7,17 @@
 
 ## Usage
 
-### :octopus: Objects
+#### Why use **Debris**
+1. Distribution network for data
+    - retreive data from different sources to distribute retrieval work loads
+    - simply: free up sql requests
+1. Reduce bottlenecks from addon services
+    - keep data integrity cross many services including `redis`, `mongodb`, `memcached` and more
+1. Class instance continuity
+    - python classes constructed with the same arguments will not create **new** object but use the one already constructed
 
-> Cache objects to speed up construction.
+
+### :octopus: Classes and Instances
 
 ```python
 import debris
@@ -23,10 +31,9 @@ class User(object):
 ```
 
 Your **User** data is store in a database, at least I hope so. Traditionally, doing a simple
-`select name, email from users where id=1;` is perfectly find for reteriving your customers.
-Debris can assist in this, but, debris is a distribution system. Your user data can be
-cached in many other locations. This can reduce bottlenecks, for example if the database
-went down we can still get customer data from memecached, redis, mongodb and others.
+`select name, email from users where id=1;` reterives your customers data.
+**Debris** can assist in this, and more, debris is a distribution system. Your user data can be
+cached in many other locations.
 
 **Ok!** Now lets get a user.
 

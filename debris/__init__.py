@@ -18,7 +18,7 @@ ROUTES = {}
 
 def routes(_routes):
     global ROUTES
-    ROUTES = _routes
     for cls, route in _routes.iteritems():
         for service in route["get"]:
             service["bank"] = getattr(banks, service["service"])
+    ROUTES = _routes

@@ -14,7 +14,6 @@ class User(object):
         self.email = data['email']
 
 
-
 class Tests(unittest.TestCase):
     data = {
         "1":  {"name": "Elaina Dach", "email": "hane.ebba@wolf.com"},
@@ -30,7 +29,7 @@ class Tests(unittest.TestCase):
     }
 
     @classmethod
-    def setupClass(self):
+    def setUpClass(self):
         r = redis.Redis()
         [r.set("User.%d"%uid, json.dumps(self.data[str(uid)])) for uid in xrange(1, 6)]
 
