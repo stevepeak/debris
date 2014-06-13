@@ -1,4 +1,4 @@
-# :recycle: Debris [![Build Status](https://secure.travis-ci.org/stevepeak/debris.png)](http://travis-ci.org/stevepeak/debris) [![Version](https://pypip.in/v/debris/badge.png)](https://github.com/stevepeak/debris)
+# :recycle: Debris [![Build Status](https://secure.travis-ci.org/stevepeak/debris.png)](http://travis-ci.org/stevepeak/debris) [![Version](https://pypip.in/v/debris/badge.png)](https://github.com/stevepeak/debris) [![Coverage Status](https://coveralls.io/repos/stevepeak/debris/badge.png?branch=master)](https://coveralls.io/r/stevepeak/debris?branch=master)
 
 > Recycling your objects and web requests with ease.
 
@@ -16,10 +16,24 @@ import debris
 
 class User(object):
     __metaclass__ = debris.Object
+<<<<<<< HEAD
     def __init__(self, id, **data):
         self.id = id
         self.name = data['name']
         self.email = data['email']
+=======
+    __debris__ = {
+        "namespace": "%(clsname)s.%(id)s"
+    }
+    def __init__(self, id, __debris__=None):
+        self.id = id
+        self.data = __debris__
+
+    @classmethod
+    def __assemble__(self, id):
+        # this method should hit the database for the data
+        return database.get("select * from users where id=%s;", id)
+>>>>>>> FETCH_HEAD
 ```
 
 Your **User** data is store in a database, at least I hope so. Traditionally, doing a simple
@@ -102,7 +116,7 @@ Your second request was cached in memory and was able to return the request resu
     - Set the `expiration`,  `callback` and more preferences
     - Expritation may be based on `eta`, `date` or `size`
 - Support for storing the cache results in other databases for data redundancy.
-    - Known already as `storage` inc. support for `memcache`, `redis` and `mongodb`
+    - Known already as `banks` inc. support for `memcache`, `redis` and `mongodb`
 - Create methods to clear the stashed assets through request handlers and system events
 - Metrics on cache size, requests and frequency
 - **Golden Rules** what all assets will comply with before being cached
