@@ -19,13 +19,12 @@ class Memcached(object):
 
             self._bank = bmemcached.Client(servers, username, password)
 
-    def get(self, *keys):
-        if len(keys) > 1:
-            assets = self._bank.get_multi(keys)
-            return [Asset.foreign(assets[key]).data for key in assets]
+    def get(self, key):
+        return Asset.foreign(self._bank.get(key)).data
 
-        elif len(keys) == 1:
-            return Asset.foreign(self._bank.get(keys[0])).data
+    def getmany(self, keys):
+        assets = self._bank.get_multi(keys)
+        return [Asset.foreign(assets[key]).data for key in assets]
 
     def set(self, key, data, **kwargs):
         return self._bank.set(str(key), Asset(data, **kwargs).dump())

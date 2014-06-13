@@ -7,7 +7,7 @@ class Memory(object):
     def __init__(self):
         self._bank = {}
 
-    def get(self, key):
+    def get(self, key, **kwargs):
         return self._bank.get(key, Asset(None)).data
 
     def set(self, key, data, **kwargs):

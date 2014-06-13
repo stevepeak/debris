@@ -2,7 +2,7 @@
 from setuptools import setup
 from setuptools import find_packages
 
-version = '0.0.3'
+version = '0.0.2'
 
 classifiers = ["Development Status :: 1 - Planning",
                "License :: OSI Approved :: Apache Software License",

@@ -25,16 +25,19 @@ class Tests(unittest.TestCase):
         "7":  {"name": "Ms. Desiree Simonis", "email": "liliana23@beer.net"},
         "8":  {"name": "Gabe Kling", "email": "jordyn.lynch@yahoo.com"},
         "9":  {"name": "Raheem Kreiger", "email": "lindgren.tanya@yahoo.com"},
-        "10": {"name": "Maximilian Kulas", "email": "tomas45@hotmail.com"}
+        "10": {"name": "Maximilian Kulas", "email": "tomas45@hotmail.com"},
+        "9":  {"name": "Raheem Kreiger", "email": "lindgren.tanya@yahoo.com"}
     }
 
     @classmethod
     def setUpClass(self):
         r = redis.Redis()
-        [r.set("User.%d"%uid, json.dumps(self.data[str(uid)])) for uid in xrange(1, 6)]
+        r.set("User.3", json.dumps(self.data["3"]))
+        r.set("User.6", json.dumps(self.data["6"]))
 
         m = bmemcached.Client()
-        [m.set("User.%d"%uid, json.dumps(self.data[str(uid)])) for uid in xrange(6, 11)]
+        m.set("User.4", json.dumps(self.data["4"]))
+        m.set("User.9", json.dumps(self.data["9"]))
         
         debris.routes({
             "User": {
@@ -44,6 +47,17 @@ class Tests(unittest.TestCase):
                     },
                     {
                         "service": "memcached"
+                    },
+                    {
+                        "service": "postgresql",
+                        "query": "select name, email from users where id=%(id)s limit 1;",
+                        "query[]": "select name, email form users where id in %(id)s limit %(limit)s;"
+                    }
+                ],
+                "put": [
+                    {
+                        "service": "redis"
+                        # "ttl": 3600 # future
                     }
                 ]
             }

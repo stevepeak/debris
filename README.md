@@ -11,6 +11,8 @@
 1. Distribution network for data
     - retreive data from different sources to distribute retrieval work loads
     - simply: free up sql requests
+1. Schema driven cache routing
+    - Optimize your applications data gets/puts
 1. Reduce bottlenecks from addon services
     - keep data integrity cross many services including `redis`, `mongodb`, `memcached` and more
 1. Class instance continuity
