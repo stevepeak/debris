@@ -13,6 +13,10 @@ Sources = amazon, redis, mongodb, postgresql, memcache
 {
     "orders": {
         // tries each source in sequential order
+        // "memory": false, use a dict to define more arguments
+        "memory": {
+            "ttl": null
+        },
         "get": ["mongodb", "postgresql"],
         "put": [
             {

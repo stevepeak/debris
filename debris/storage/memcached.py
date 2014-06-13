@@ -3,7 +3,7 @@ import os
 from debris.asset import Asset
 
 
-class Memcache(object):
+class Memcached(object):
     def __init__(self, servers=None, username=None, password=None):
         try:
             import bmemcached

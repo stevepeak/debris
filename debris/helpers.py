@@ -7,4 +7,3 @@ def callattr(cls, attr, *args, **kwargs):
             return getattr(cls, attr)(*args, **kwargs)
         elif hasattr(attr, "__call__"):
             return attr(*args, **kwargs)
-    return attr

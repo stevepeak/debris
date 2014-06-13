@@ -16,29 +16,41 @@ import debris
 
 class User(object):
     __metaclass__ = debris.Object
-    __debris__ = {
-        "namespace": "%(clsname)s.%(id)s",
-        "retreive": "_retreive"
-    }
-    def __init__(self, id, __debris__=None):
+    def __init__(self, id, **data):
         self.id = id
-        self.data = __debris__
-
-    @classmethod
-    def _retreive(self, id):
-        # this method should hit the database for the data
-        return database.get("select * from users where id=%s;", id)
+        self.name = data['name']
+        self.email = data['email']
 ```
+
+Your **User** data is store in a database, at least I hope so. Traditionally, doing a simple
+`select name, email from users where id=1;` is perfectly find for reteriving your customers.
+Debris can assist in this, but, debris is a distribution system. Your user data can be
+cached in many other locations. This can reduce bottlenecks, for example if the database
+went down we can still get customer data from memecached, redis, mongodb and others.
 
 **Ok!** Now lets get a user.
 
 ```python
->>> u = User(123) # this will construct the user from the database
->>> u2 = User(123)
->>> id(u2) == id(u) # the user was found in memory
+>>> user = User(1) # this will construct the user from the database
+>>> user.name = "Steve"
+```
+
+#### Consistancy
+
+Debris will maintain the continuity of your objects. Heres how:
+
+```python
+>>> id(User(1)) == id(User(1))
 True
->>> u2.name = "Steve"
->>> u1.name
+```
+
+Traditionally in python these objects would **not** be the exact same on memory. 
+Therefore doing something set data (like in this next example) would fail, but
+with debris this is perfectly ok.
+
+```python
+>>> User(1).name = "Steve"
+>>> User(1).name
 "Steve"
 ```
 
@@ -58,15 +70,15 @@ import tornado.ioloop
 import tornado.web
 import tornado.httpclient
 import time
-import debris
+from debris.tornado import cached
 
 class MainHandler(tornado.web.RequestHandler):
-    @debris.tornado.request()
+    @cached("homepage")
     def get(self):
         # example request that takes some time()
         time.sleep(5)       
         # finsih with anything: html, json, xml etc.
-        self.finish("")
+        self.finish("<html>This is now prebuilt</html>")
 
 application = tornado.web.Application([(r"/", MainHandler)])
 

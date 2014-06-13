@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from setuptools import setup
+from setuptools import find_packages
 
 version = '0.0.3'
 
@@ -22,7 +23,7 @@ setup(name='debris',
       author_email='steve@stevepeak.net',
       url='http://github.com/stevepeak/debris',
       license='http://www.apache.org/licenses/LICENSE-2.0',
-      packages=['debris', 'debris.storage', 'debris.wrappers'],
+      packages=find_packages(exclude=["tests"]),
       include_package_data=True,
       zip_safe=True,
       install_requires=[],

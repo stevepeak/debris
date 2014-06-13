@@ -3,12 +3,6 @@ version = VERSION = __version__ = '0.0.3'
 from debris.object import Object
 from debris.storage import banks
 
-try:
-    import tornado.web
-    from debris.wrappers import tornado
-except:
-    # no tornado package found...
-    pass
 
 def setup():
     """
@@ -18,3 +12,13 @@ def setup():
     require to pass through these rules.
     """
     pass
+
+
+ROUTES = {}
+
+def routes(_routes):
+    global ROUTES
+    ROUTES = _routes
+    for cls, route in _routes.iteritems():
+        for service in route["get"]:
+            service["bank"] = getattr(banks, service["service"])

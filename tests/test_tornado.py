@@ -1,13 +1,11 @@
-import os
-import unittest
 import tornado.web
 from tornado.testing import AsyncHTTPTestCase
 
-import debris
+from debris.tornado import cached
 
 
 class MainHandler(tornado.web.RequestHandler):
-    @debris.tornado.request("home-page")
+    @cached("homepage")
     def get(self):
         self.application._i +=1
         self.finish(str(self.application._i))
@@ -30,7 +28,3 @@ class Tests(AsyncHTTPTestCase):
         data = self.fetch("/")
         # if this is equal to "3" then it failed...
         self.assertEqual(data.body, "1")
-
-
-if __name__ == '__main__':
-    unittest.main()

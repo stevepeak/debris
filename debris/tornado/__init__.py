@@ -16,13 +16,13 @@ def _replace_finish(handler, namespace, bank):
         handler.finish = _rp
     handler.finish = finish
 
-def request(namespace=None, bank=None, debug=False):
+def cached(namespace=None, bank=None, debug=False):
     """
     Wrapper for tornado requests. Example
 
     ```
     class MainHandler(tornado.web.RequestHandler):
-        @debris.tornado.request("home-page", bank=debris.banks.memory)
+        @debris.tornado.cached("home-page", bank=debris.banks.memory)
         def get(self):
             self.write("Hello, world")
 
