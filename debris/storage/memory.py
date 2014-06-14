@@ -1,17 +1,19 @@
 import re
 
-from debris.asset import Asset
+from debris.asset import encode
+from debris.asset import decode
+
 
 
 class Memory(object):
     def __init__(self):
         self._bank = {}
 
-    def get(self, key, **kwargs):
-        return self._bank.get(key, Asset(None)).data
+    def get(self, key):
+        return self._bank.get(key, None)
 
-    def set(self, key, data, **kwargs):
-        self._bank[key] = Asset(data, **kwargs)
+    def set(self, key, data):
+        self._bank[key] = data
 
     def keys(self, search=None):
         if search:

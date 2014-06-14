@@ -51,7 +51,7 @@ class Tests(unittest.TestCase):
                     {
                         "service": "postgresql",
                         "query": "select name, email from users where id=%(id)s limit 1;",
-                        "query[]": "select name, email form users where id in %(id)s limit %(limit)s;"
+                        "query[]": "select id, name, email from users where id in %(id)s limit %(limit)s;"
                     }
                 ],
                 "put": [
@@ -72,14 +72,12 @@ class Tests(unittest.TestCase):
             self.assertIs(u, User(uid), "not the same id on ram")
 
     def test_multi(self):
-        users = User([1,4,5,7,9])
-
+        ids = [1,4,5,7,9]
+        users = User(ids)
         for u in users:
             self.assertIsInstance(u, User)
             self.assertIs(u, User(u.id), "not the same id on ram")
+            self.assertIn(int(u.id), ids)
+            ids.remove(int(u.id))
             self.assertEqual(u.name, self.data[u.id]["name"])
             self.assertEqual(u.email, self.data[u.id]["email"])
-
-
-if __name__ == '__main__':
-    unittest.main()

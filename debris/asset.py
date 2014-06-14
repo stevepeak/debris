@@ -1,8 +1,3 @@
-try:
-    from cPickle import loads, dumps
-except ImportError:
-    from pickle import loads, dumps
-
 from json import loads as json_decode
 from json import dumps as json_encode
 
@@ -30,3 +25,10 @@ class Asset(object):
     @classmethod
     def foreign(self, data):
         return Asset(data)
+
+def decode(data):
+    if data:
+        return json_decode(data)
+
+def encode(data, extra):
+    return json_encode(data)

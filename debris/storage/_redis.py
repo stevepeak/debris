@@ -1,4 +1,5 @@
-from debris.asset import Asset
+from debris.asset import encode
+from debris.asset import decode
 
 
 class Redis(object):
@@ -11,14 +12,14 @@ class Redis(object):
             self._bank = redis.Redis()
 
     def get(self, key):
-        return Asset.foreign(self._bank.get(key)).data
+        return decode(self._bank.get(key))
 
     def getmany(self, keys):
-        assets = self._bank.get_multi(keys)
-        return [Asset.foreign(assets[key]).data for key in assets]
+        values = self._bank.mget(keys)
+        return zip(tuple(keys), tuple(map(decode, values)))
 
     def set(self, key, data, **kwargs):
-        return self._bank.set(str(key), Asset(data, **kwargs).dump())
+        return self._bank.set(str(key), encode(data, kwargs))
 
     def remove(self, *keys):
         if keys[0] == '*':
