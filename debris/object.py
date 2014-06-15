@@ -22,11 +22,24 @@ class Object(type):
         # ---------
         # Namespace
         # ---------
-        namespace = call(route.get('namespace'), args, kwargs) if route.get('namespace') \
-                    else ".".join(map(str, [cls.__name__] + list(args)))
+        if None in args:
+            namespace = None
+        else:
+            namespace = call(route.get('namespace'), args, kwargs) if route.get('namespace') \
+                        else ".".join(map(str, [cls.__name__] + list(args)))
 
         # bool, can store in memory
         _in_memory = route.get('memory', True)
+
+        # ---------------
+        # Get from Memory
+        # ---------------
+        if _in_memory and namespace:
+            # check for this namespace
+            obj = debris.services.memory.get(namespace)
+            if obj:
+                # found in memory! return the obj
+                return obj
 
         # ------------------------
         # Constructed w/ init args
@@ -44,15 +57,8 @@ class Object(type):
                 debris.services.memory.set(namespace, obj)
             return obj
 
-        # ---------------
-        # Get from Memory
-        # ---------------
-        if _in_memory:
-            # check for this namespace
-            obj = debris.services.memory.get(namespace)
-            if obj:
-                # found in memory! return the obj
-                return obj
+        elif not namespace:
+            raise LookupError("No id/key provided to initialize object "+namespace.replace('.', '(', 1).replace('.', ', ')+")")
 
         # -----------------
         # Retrieve the Data
@@ -61,10 +67,7 @@ class Object(type):
         data = None
         if route.get('get'):
             for r in route['get']:
-                if r['service'] == 'custom':
-                    iwargs = dict([(k, args[i] if len(args) > i else None) for i, k in enumerate(insp.args[1:])])
-                    data = r['get'](args, iwargs)
-                elif r['service'] == 'postgresql':
+                if r['service'] == 'postgresql':
                     iwargs = dict([(k, args[i] if len(args) > i else None) for i, k in enumerate(insp.args[1:])])
                     data = r["bank"].get(r['query'], **iwargs)
                 else:
@@ -76,8 +79,9 @@ class Object(type):
             # Retrieve the Data
             # -----------------
             if not data:
-                raise LookupError()
-        else:
+                raise LookupError("Data could not be found for "+namespace.replace('.', '(', 1).replace('.', ', ')+")")
+
+        if not data:
             data = {}
 
         # --------------------
@@ -164,11 +168,6 @@ class Object(type):
                     # keys[row.pop('id')] => "user.1"
                     results = [(keys[row.pop(key)], row) for row in results]
 
-            elif r['service'] == 'custom':
-                iwargs = dict([(k, args[i] if len(args) > i else None) for i, k in enumerate(insp.args[:-1])])
-                iwargs[insp.args[-1]] = tuple(keys.keys())
-                results = r['get[]'](args, iwargs)
-
             else:
                 results = r["bank"].getmany(namespaces.values())
 
@@ -210,7 +209,7 @@ class Object(type):
         # -------------------
         # Routes and Settings
         # -------------------
-        route = debris.CONFIG["objects"].get(cls.__name__, {})
+        route = debris.CONFIG.get("objects", {}).get(cls.__name__, {})
 
         # ---------------
         # Multi Construct

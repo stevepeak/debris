@@ -1,25 +1,26 @@
-# :recycle: Debris [![Build Status](https://secure.travis-ci.org/stevepeak/debris.png)](http://travis-ci.org/stevepeak/debris) [![Version](https://pypip.in/v/debris/badge.png)](https://github.com/stevepeak/debris) [![Coverage Status](https://coveralls.io/repos/stevepeak/debris/badge.png?branch=master)](https://coveralls.io/r/stevepeak/debris?branch=master)
+# :leaves: Debris [![Build Status](https://secure.travis-ci.org/stevepeak/debris.png)](http://travis-ci.org/stevepeak/debris) [![Version](https://pypip.in/v/debris/badge.png)](https://github.com/stevepeak/debris) [![Coverage Status](https://coveralls.io/repos/stevepeak/debris/badge.png?branch=master)](https://coveralls.io/r/stevepeak/debris?branch=master)
 
-> 1. 
-
-## Install
+### Install
 `pip install debris`
 
-## Usage
+### Featuring
 
-#### Featuring
-> 1. Distribution network for data
->     - retreive data from different sources to distribute retrieval work loads
->     - simply: free up sql requests
-> 1. Schema driven cache routing
->     - Optimize your applications data gets/puts
-> 1. Reduce bottlenecks from addon services
->     - keep data integrity cross many services including `redis`, `mongodb`, `memcached` and more
-> 1. Class instance continuity
->     - python classes constructed with the same arguments will not create **new** object but use the one already constructed
+1. Distribution network for data
+    - retreive data from different sources to distribute retrieval work loads
+    - simply: free up sql requests
+1. Schema driven cache routing
+    - Optimize your applications data gets/puts
+1. Reduce bottlenecks from addon services
+    - keep data integrity cross many services including `redis`, `mongodb`, `memcached` and more
+1. Class instance continuity
+    - python classes constructed with the same arguments will not create **new** object but use the one already constructed
 
+# Usage
 
-### :octopus: Classes and Instances
+### :gemini: Same-Same Instances
+
+Traditionally in python these objects would **not** be the exact same on memory. 
+
 
 ```python
 import debris
@@ -27,44 +28,68 @@ import debris
 class User(object):
     __metaclass__ = debris.Object
     def __init__(self, id, **data):
-        self.id = id
         self.name = data['name']
-        self.email = data['email']
-```
 
-Your **User** data is store in a database, at least I hope so. Traditionally, doing a simple
-`select name, email from users where id=1;` reterives your customers data.
-**Debris** can assist in this, and more, debris is a distribution system. Your user data can be
-cached in many other locations.
-
-**Ok!** Now lets get a user.
-
-```python
->>> user = User(1) # this will construct the user from the database
->>> user.name = "Steve"
-```
-
-#### Consistancy
-
-Debris will maintain the continuity of your objects. Heres how:
-
-```python
+>>> User(1) is User(1)
+True # w/out debris this would be False
 >>> id(User(1)) == id(User(1))
 True
-```
-
-Traditionally in python these objects would **not** be the exact same on memory. 
-Therefore doing something set data (like in this next example) would fail, but
-with debris this is perfectly ok.
-
-```python
 >>> User(1).name = "Steve"
 >>> User(1).name
 "Steve"
 ```
 
 
-### :candy: Wrapping Web Requests
+### :octopus: Initializing
+
+```python
+import debris
+
+debris.config({
+    "services": {
+        "postgresql": {"url": "postgresql://..."}
+    },
+    "objects": {
+        "User": {
+            "get": [
+                {
+                    "service": "postgresql",
+                    "query": "select name, email from users where id=%(id)s limit 1;"
+                }
+            ]
+        }
+    }
+})
+
+class User(object):
+    __metaclass__ = debris.Object
+    def __init__(self, id, **data):
+        self.id = id
+        self.name = data['name']
+        self.email = data['email']
+
+>>> User(15).name
+"John"
+```
+
+Constructing your objects typically is a query to the database. So lets establish this with debris. We configure debris to initiate `postgresql` service so we can **get** our Users from the database. This, at first glance, may look unnecessary and not *fixing* any problem. So lets add some more services to see the full benefits.
+
+> ...
+> Need to add more content here.
+> ...
+
+
+#### Rules
+1. **No data, no instance** when no data is found the requested object will not initialize and a `LookupError` will be raises.
+1. **Same, Same** instances with the same arguments will be considered equivelent
+    - the first initialized instance will be returned, therefore **not** initializing a new instance
+
+
+
+
+
+
+## :candy: Wrapping Web Requests
 
 > Decorate your web request handlers for quicker request times.
 

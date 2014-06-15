@@ -15,12 +15,12 @@ class PostgreSQL(object):
     def get(self, query, **kwargs):
         result = self.service.get(query, **kwargs)
         if '__debris__' in result:
-            result.update(result.pop("__debris__"))
+            result.update(result.pop("__debris__") or {})
         return result
 
     def getmany(self, query, **kwargs):
         results = self.service.query(query, **kwargs)
         for row in results:
             if '__debris__' in row:
-                row.update(row.pop("__debris__"))
+                row.update(row.pop("__debris__") or {})
         return results

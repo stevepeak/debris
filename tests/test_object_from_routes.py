@@ -85,3 +85,10 @@ class Tests(unittest.TestCase):
             ids.remove(int(u.id))
             self.assertEqual(u.name, self.data[u.id]["name"])
             self.assertEqual(u.email, self.data[u.id]["email"])
+
+    def test_same_same(self):
+        "objects with same arguments will always be the same on ram"
+        self.assertIs(User(1), User(1))
+        self.assertIsNot(User(1), User(2))
+        self.assertIs(User(1), User(1, name="john"))
+        self.assertEqual(User(1, name="john", email="").name, "Elaina Dach")
