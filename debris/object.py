@@ -5,6 +5,11 @@ import debris
 def call(_callable, args, kwargs):
     return _callable(*args, **kwargs) if hasattr(_callable, "__call__") else None
 
+def callattr(cls, attr, args, kwargs):
+    if hasattr(attr, '__call___'):
+        return attr(args, kwargs)
+    elif hasattr(cls, attr):
+        return getattr(cls, attr)(args, kwargs)
 
 class Object(type):
     def get(cls, route, args, kwargs):
@@ -36,7 +41,7 @@ class Object(type):
             obj = cls.__new__(cls, *args, **kwargs)
             obj.__init__(*args, **kwargs)
             if namespace and _in_memory:
-                debris.banks.memory.set(namespace, obj)
+                debris.services.memory.set(namespace, obj)
             return obj
 
         # ---------------
@@ -44,7 +49,7 @@ class Object(type):
         # ---------------
         if _in_memory:
             # check for this namespace
-            obj = debris.banks.memory.get(namespace)
+            obj = debris.services.memory.get(namespace)
             if obj:
                 # found in memory! return the obj
                 return obj
@@ -54,20 +59,26 @@ class Object(type):
         # -----------------
         insp = inspect.getargspec(cls.__init__)
         data = None
-        for r in route['get']:
-            if r['service'] == 'postgresql':
-                iwargs = dict([(k, args[i] if len(args) > i else None) for i, k in enumerate(insp.args[1:])])
-                data = r["bank"].get(r['query'], **iwargs)
-            else:
-                data = r["bank"].get(namespace)
-            if data:
-                break
+        if route.get('get'):
+            for r in route['get']:
+                if r['service'] == 'custom':
+                    iwargs = dict([(k, args[i] if len(args) > i else None) for i, k in enumerate(insp.args[1:])])
+                    data = r['get'](args, iwargs)
+                elif r['service'] == 'postgresql':
+                    iwargs = dict([(k, args[i] if len(args) > i else None) for i, k in enumerate(insp.args[1:])])
+                    data = r["bank"].get(r['query'], **iwargs)
+                else:
+                    data = r["bank"].get(namespace)
+                if data:
+                    break
 
-        # -----------------
-        # Retrieve the Data
-        # -----------------
-        if not data:
-            raise LookupError()
+            # -----------------
+            # Retrieve the Data
+            # -----------------
+            if not data:
+                raise LookupError()
+        else:
+            data = {}
 
         # --------------------
         # Manage Args / Kwargs
@@ -77,7 +88,8 @@ class Object(type):
         [data.pop(k) for k in insp.args if k in data]
 
         # substiture class w/ known data
-        cls = call(route.get('substitute'), args, data) or cls
+        if route.get('substitute'):
+            cls = callattr(cls, route['substitute'], args, data) or cls
 
         # ----------------
         # Initialize Class
@@ -89,7 +101,7 @@ class Object(type):
         # Store in Memory
         # ---------------
         if _in_memory:
-            debris.banks.memory.set(namespace, obj)
+            debris.services.memory.set(namespace, obj)
 
         # return the constructed object
         return obj
@@ -106,8 +118,8 @@ class Object(type):
         returning_append = returning.append
         namespaces = {} # ns: key
         keys = {} # key: ns
-        memory_get = debris.banks.memory.get
-        memory_set = debris.banks.memory.set
+        memory_get = debris.services.memory.get
+        memory_set = debris.services.memory.set
 
         # ---------------
         # Get from Memory
@@ -152,6 +164,11 @@ class Object(type):
                     # keys[row.pop('id')] => "user.1"
                     results = [(keys[row.pop(key)], row) for row in results]
 
+            elif r['service'] == 'custom':
+                iwargs = dict([(k, args[i] if len(args) > i else None) for i, k in enumerate(insp.args[:-1])])
+                iwargs[insp.args[-1]] = tuple(keys.keys())
+                results = r['get[]'](args, iwargs)
+
             else:
                 results = r["bank"].getmany(namespaces.values())
 
@@ -167,7 +184,8 @@ class Object(type):
 
                         # substiture class w/ known data
                         # ------------------------------
-                        _cls = call(route.get('substitute'), args, data) or cls
+                        if route.get('substitute'):
+                            _cls = callattr(cls, route.get('substitute'), args, data) or cls
 
                         # initialize class
                         # ----------------
@@ -192,7 +210,7 @@ class Object(type):
         # -------------------
         # Routes and Settings
         # -------------------
-        route = debris.ROUTES[cls.__name__]
+        route = debris.CONFIG["objects"].get(cls.__name__, {})
 
         # ---------------
         # Multi Construct

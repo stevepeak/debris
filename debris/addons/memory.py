@@ -4,32 +4,31 @@ from debris.asset import encode
 from debris.asset import decode
 
 
-
 class Memory(object):
-    def __init__(self):
-        self._bank = {}
+    def __init__(self, config=None):
+        self.cache = {}
 
     def get(self, key):
-        return self._bank.get(key, None)
+        return self.cache.get(key, None)
 
     def set(self, key, data):
-        self._bank[key] = data
+        self.cache[key] = data
 
     def keys(self, search=None):
         if search:
-            keys = self._bank.keys()
+            keys = self.cache.keys()
             rc = re.compile(search)
             return [key for key in keys if re.search(rc, key, re.I)]
         else:
-            return self._bank.keys()
+            return self.cache.keys()
 
     def remove(self, key, **reasons):
         if key == '*':
-            self._bank = {}
+            self.cache = {}
             return None
-        elif key in self._bank:
-            self._bank[key].destroy(reasons)
-            del self._bank[key]
+        elif key in self.cache:
+            self.cache[key].destroy(reasons)
+            del self.cache[key]
             return True
         return False
 
@@ -39,7 +38,7 @@ class Memory(object):
         the assets why they will be destroyed
         """
         tags = set(tags)
-        for key, asset in self._bank.items():
+        for key, asset in self.cache.items():
             if tags & asset.tags:
                 asset.destroy(reasons)
-                del self._bank[key]
+                del self.cache[key]

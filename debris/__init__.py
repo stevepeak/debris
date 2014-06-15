@@ -1,24 +1,34 @@
 version = VERSION = __version__ = '0.0.2'
 
 from debris.object import Object
-from debris.storage import banks
+from debris.addons.memory import Memory
 
 
-def setup():
-    """
-    # The Golden Rules.
-    Establish some standars for all the assets
-    passing through Debris. Any asset created will 
-    require to pass through these rules.
-    """
-    pass
+class services:
+    # set by default, ok to replace
+    memory = Memory()
 
+CONFIG = {}
 
-ROUTES = {}
+def config(settings):
+    global CONFIG
+    CONFIG = settings
 
-def routes(_routes):
-    global ROUTES
-    for cls, route in _routes.iteritems():
-        for service in route["get"]:
-            service["bank"] = getattr(banks, service["service"])
-    ROUTES = _routes
+    services.memory = Memory(settings["services"].get("memory", None))
+
+    if 'memcached' in settings['services']:
+        from debris.addons.memcached import Memcached
+        services.memcached = Memcached(settings["services"]["memcached"])
+
+    if 'redis' in settings['services']:
+        from debris.addons._redis import Redis
+        services.redis = Redis(settings["services"]["redis"])
+
+    if 'postgresql' in settings["services"]:
+        from debris.addons.postgresql import PostgreSQL
+        services.postgresql = PostgreSQL(settings["services"]["postgresql"])
+    
+    # Manage Routes
+    for cls, obj in settings.get('objects', {}).iteritems():
+        for service in obj.get("get", []):
+            service["bank"] = getattr(services, service["service"])

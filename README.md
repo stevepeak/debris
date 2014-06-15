@@ -1,22 +1,22 @@
 # :recycle: Debris [![Build Status](https://secure.travis-ci.org/stevepeak/debris.png)](http://travis-ci.org/stevepeak/debris) [![Version](https://pypip.in/v/debris/badge.png)](https://github.com/stevepeak/debris) [![Coverage Status](https://coveralls.io/repos/stevepeak/debris/badge.png?branch=master)](https://coveralls.io/r/stevepeak/debris?branch=master)
 
-> Recycling your objects and web requests with ease.
+> 1. 
 
 ## Install
 `pip install debris`
 
 ## Usage
 
-#### Why use **Debris**
-1. Distribution network for data
-    - retreive data from different sources to distribute retrieval work loads
-    - simply: free up sql requests
-1. Schema driven cache routing
-    - Optimize your applications data gets/puts
-1. Reduce bottlenecks from addon services
-    - keep data integrity cross many services including `redis`, `mongodb`, `memcached` and more
-1. Class instance continuity
-    - python classes constructed with the same arguments will not create **new** object but use the one already constructed
+#### Featuring
+> 1. Distribution network for data
+>     - retreive data from different sources to distribute retrieval work loads
+>     - simply: free up sql requests
+> 1. Schema driven cache routing
+>     - Optimize your applications data gets/puts
+> 1. Reduce bottlenecks from addon services
+>     - keep data integrity cross many services including `redis`, `mongodb`, `memcached` and more
+> 1. Class instance continuity
+>     - python classes constructed with the same arguments will not create **new** object but use the one already constructed
 
 
 ### :octopus: Classes and Instances

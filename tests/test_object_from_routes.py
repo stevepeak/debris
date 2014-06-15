@@ -1,3 +1,4 @@
+import os
 import json
 import redis
 import unittest
@@ -25,8 +26,7 @@ class Tests(unittest.TestCase):
         "7":  {"name": "Ms. Desiree Simonis", "email": "liliana23@beer.net"},
         "8":  {"name": "Gabe Kling", "email": "jordyn.lynch@yahoo.com"},
         "9":  {"name": "Raheem Kreiger", "email": "lindgren.tanya@yahoo.com"},
-        "10": {"name": "Maximilian Kulas", "email": "tomas45@hotmail.com"},
-        "9":  {"name": "Raheem Kreiger", "email": "lindgren.tanya@yahoo.com"}
+        "10": {"name": "Maximilian Kulas", "email": "tomas45@hotmail.com"}
     }
 
     @classmethod
@@ -38,28 +38,32 @@ class Tests(unittest.TestCase):
         m = bmemcached.Client()
         m.set("User.4", json.dumps(self.data["4"]))
         m.set("User.9", json.dumps(self.data["9"]))
-        
-        debris.routes({
-            "User": {
-                "get": [
-                    {
-                        "service": "redis"
-                    },
-                    {
-                        "service": "memcached"
-                    },
-                    {
-                        "service": "postgresql",
-                        "query": "select name, email from users where id=%(id)s limit 1;",
-                        "query[]": "select id, name, email from users where id in %(id)s limit %(limit)s;"
-                    }
-                ],
-                "put": [
-                    {
-                        "service": "redis"
-                        # "ttl": 3600 # future
-                    }
-                ]
+
+        debris.config({
+            "services": {
+                "redis": {},
+                "memcached": {},
+                "postgresql": {},
+                "memory": {}
+            },
+            "objects": {
+                "User": {
+                    "get": [
+                        {"service": "redis"},
+                        {"service": "memcached"},
+                        {
+                            "service": "postgresql",
+                            "query": "select name, email from users where id=%(id)s limit 1;",
+                            "query[]": "select id, name, email from users where id in %(id)s limit %(limit)s;"
+                        }
+                    ],
+                    "put": [
+                        {
+                            "service": "redis"
+                            # "ttl": 3600 # future
+                        }
+                    ]
+                }
             }
         })
 
