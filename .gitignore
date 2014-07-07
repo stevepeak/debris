@@ -8,3 +8,5 @@ coverage_html_report
 .noseids
 dist
 .coverage
+.DS_Store
+*.pyc

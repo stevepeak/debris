@@ -14,6 +14,7 @@ before_script:
   - psql -U postgres -c 'create database debris;' 
   - psql debris -U postgres -f tests/demo.sql
   - pip install Tornado python-binary-memcached redis coveralls tornpsql
+  - pip install --upgrade git+https://github.com/stevepeak/tornpsql@master
 script:
   - coverage run -m unittest discover -s tests
 after_success:
