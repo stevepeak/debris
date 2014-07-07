@@ -9,9 +9,9 @@ class User:
         self.id = id
 
     @debris.property
-    def name(self, value):
-        print "\033[92m....\033[0m", 'post processing'
-        return value
+    def name(self, get, set):
+        print "\033[92m@name\033[0m", get, set
+        return get
 
 
 class Tests(unittest.TestCase):
