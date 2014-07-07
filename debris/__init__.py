@@ -2,11 +2,16 @@ version = VERSION = __version__ = '0.0.2'
 
 from debris.object import Object
 from debris.addons.memory import Memory
+from .property import _property as property
 
 
 class services:
     # set by default, ok to replace
     memory = Memory()
+
+    @classmethod
+    def get(self, service):
+        return getattr(self, service)
 
 CONFIG = {}
 
