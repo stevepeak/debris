@@ -22,13 +22,14 @@ class Customer(object):
     def name(self):
         pass
 
+    email = debris.property("email")
+
 
 class Tests(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         r = redis.Redis()
-        r.hset("Customer.1", "age", 1)
-        r.hset("Customer.1", "name", "Joe Smoe")
+        r.hmset("Customer.1", dict(age=1, name="Joe Smoe", email="joe@smoeworld.com"))
 
         debris.config({
             "services": {
@@ -52,6 +53,14 @@ class Tests(unittest.TestCase):
                                     "method": "hash"
                                 }
                             ]
+                        },
+                        "email": {
+                            "get": [
+                                {
+                                    "service": "redis",
+                                    "method": "hash"
+                                }
+                            ]
                         }
                     }
                 }
@@ -68,6 +77,10 @@ class Tests(unittest.TestCase):
         self.assertEqual(u.age, 10)
         self.assertEqual(u.age, 10)
 
-    def _test_name(self):
+    def test_name(self):
         u = Customer(1)
         self.assertEqual(u.name, "Joe Smoe")
+
+    def test_email(self):
+        u = Customer(1)
+        self.assertEqual(u.email, "joe@smoeworld.com")

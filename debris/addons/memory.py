@@ -9,7 +9,9 @@ class Memory(object):
         self.cache = {}
 
     def get(self, key):
-        return self.cache.get(key, None)
+        if key in self.cache:
+            return self.cache[key]
+        raise LookupError("Key not found in memory, %s" % key)
 
     def set(self, key, data):
         self.cache[key] = data
@@ -37,8 +39,9 @@ class Memory(object):
         provide additional `**reasons` to inform
         the assets why they will be destroyed
         """
-        tags = set(tags)
-        for key, asset in self.cache.items():
-            if tags & asset.tags:
-                asset.destroy(reasons)
-                del self.cache[key]
+        pass
+        # tags = set(tags)
+        # for key, asset in self.cache.items():
+        #     if tags & asset.tags:
+        #         asset.destroy(reasons)
+        #         del self.cache[key]

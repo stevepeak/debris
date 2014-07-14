@@ -34,12 +34,9 @@ def cached(namespace=None, service="memory", debug=False):
         def _stash(self, *a, **k):
             if debug is False:
                 # this request is cacheable
-                print "\033[92m....\033[0m", _service, dir(_service)
-                data = _service.get(namespace)
-                # return the cache result
-                if data:
-                    self.finish(data)
-                else:
+                try:
+                    self.finish(_service.get(namespace))
+                except LookupError:
                     _replace_finish(self, namespace, _service)
                     # get the result of this request
                     _f(self, *a, **k)
