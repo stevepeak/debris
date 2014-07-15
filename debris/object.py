@@ -2,6 +2,7 @@ import inspect
 
 import debris
 
+
 def call(_callable, args, kwargs):
     return _callable(*args, **kwargs) if hasattr(_callable, "__call__") else None
 
@@ -29,17 +30,17 @@ class Object(type):
                         else ".".join(map(str, [cls.__name__] + list(args)))
 
         # bool, can store in memory
-        _in_memory = route.get('memory', True)
+        # _in_memory = route.get('memory', True)
 
         # ---------------
         # Get from Memory
         # ---------------
-        if _in_memory and namespace:
-            # check for this namespace
-            obj = debris.services.memory.get(namespace)
-            if obj:
-                # found in memory! return the obj
-                return obj
+        # if _in_memory and namespace:
+        # check for this namespace
+        try:
+            return debris.services.memory.get(namespace)
+        except LookupError:
+            pass
 
         # ------------------------
         # Constructed w/ init args
@@ -53,7 +54,7 @@ class Object(type):
             cls = call(route.get('substitute'), args, kwargs) or cls
             obj = cls.__new__(cls, *args, **kwargs)
             obj.__init__(*args, **kwargs)
-            if namespace and _in_memory:
+            if namespace:
                 debris.services.memory.set(namespace, obj)
             return obj
 
@@ -104,13 +105,13 @@ class Object(type):
         # ---------------
         # Store in Memory
         # ---------------
-        if _in_memory:
+        if namespace:
             debris.services.memory.set(namespace, obj)
 
         # return the constructed object
         return obj
 
-    def getmany(cls, route, args, kwargs, keys):
+    def getmany(cls, route, args, kwargs, _keys):
         """
         1. build name space
         2. look locally for copies
@@ -118,10 +119,16 @@ class Object(type):
         4. fetch the new ones
         5. return found + new list
         """
+        # copy the list of keys
+        keys = [] + _keys
+        # build a list of returning objects
         returning = []
+        # dictionary of references
+        namespaces = {} # key: ns
+        namespace_keys = {} # ns: key
+        
+        # shorthand
         returning_append = returning.append
-        namespaces = {} # ns: key
-        keys = {} # key: ns
         memory_get = debris.services.memory.get
         memory_set = debris.services.memory.set
 
@@ -129,7 +136,6 @@ class Object(type):
         # Get from Memory
         # ---------------
         for key in keys:
-
             # ---------
             # Namespace
             # ---------
@@ -137,27 +143,27 @@ class Object(type):
                         else ".".join(map(str, [cls.__name__] + args + [key]))
             
             # check for this namespace
-            obj = memory_get(namespace)
-            if obj:
-                # found in memory! return the obj
-                returning_append(obj)
-            else:
-                keys[key] = namespace
-                namespaces[namespace] = key
+            try:
+                returning_append(memory_get(namespace))
+            except LookupError:
+                # not found, add to namespace list
+                namespaces[key] = namespace
+                namespace_keys[namespace] = key
+
+        if not namespaces:
+            # all data found, return the findings
+            return returning
 
         # -----------------
         # Retrieve the Data
         # -----------------
         insp = inspect.getargspec(cls.__init__)
-        insp.args.pop(0)
+        insp.args.pop(0) # self
         data = None
         for r in route['get']:
-            if not namespaces:
-                break
-
             if r['service'] == 'postgresql':
                 iwargs = dict([(k, args[i] if len(args) > i else None) for i, k in enumerate(insp.args[:-1])])
-                iwargs[insp.args[-1]] = tuple(keys.keys())
+                iwargs[insp.args[-1]] = namespaces.keys()
                 # create a limit, speed up the query
                 iwargs['limit'] = len(namespaces)
                 results = r["bank"].getmany(r['query[]'], **iwargs)
@@ -166,7 +172,7 @@ class Object(type):
                     key = insp.args[-1]
                     # pop out the "key" for each row, ex. "id", then switch to the namespace
                     # keys[row.pop('id')] => "user.1"
-                    results = [(keys[row.pop(key)], row) for row in results]
+                    results = [(namespaces[row[key]], row) for row in results]
 
             else:
                 results = r["bank"].getmany(namespaces.values())
@@ -177,25 +183,22 @@ class Object(type):
                 # [(ns, data), ...]
                 for namespace, data in results:
                     if data:
-                        # clean inline args out
-                        # ---------------------
-                        [data.pop(k) for k in insp.args if k in data]
-
                         # substiture class w/ known data
                         # ------------------------------
                         if route.get('substitute'):
                             _cls = callattr(cls, route.get('substitute'), args, data) or cls
+                        else:
+                            _cls = cls
 
                         # initialize class
                         # ----------------
-                        _args = args + [namespaces.pop(namespace)]
-                        keys.pop(_args[-1])
-                        obj = _cls.__new__(_cls, *_args, **data)
-                        obj.__init__(*_args, **data)
+                        obj = _cls.__new__(_cls, *args, **data)
+                        obj.__init__(*args, **data)
 
                         # store in memory
                         # ---------------
                         memory_set(namespace, obj)
+                        namespaces.pop(namespace_keys.pop(namespace))
 
                         # add the constructed object
                         # --------------------------

@@ -9,6 +9,10 @@ class services:
     # set by default, ok to replace
     memory = Memory()
 
+    @classmethod
+    def get(self, service):
+        return getattr(self, service)
+
 CONFIG = {}
 
 def config(settings):

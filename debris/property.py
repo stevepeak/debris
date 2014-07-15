@@ -1,29 +1,44 @@
 import debris
-import functools
-
 
 
 def _property(_f):
+    if callable(_f):
+        name = _f.func_name
+    else:
+        name = _f
+        _f = None
+    assert type(name) is str, "invalid key"
 
     def setter(self, value):
-        print "\033[95m@setter\033[0m", self, value
-        self.__properties__[_f.__name___] = _f(None, value)
+        try:
+            self.__properties__[name] = _f(self, NotImplemented, value) if _f else value
+        except TypeError:
+            self.__properties__[name] = value
 
     def getter(self):
-        """This method will automatically find the 
-        property of this object following the paths 
-        of debris config.
-
-        The function is passed the results for post-processing
-        the value(s) which will be cached for all future request.
-        """
-        print "\033[95m@getter\033[0m", self
-        name = _f.__name__
+        
         if name in self.__properties__:
             return self.__properties__[name]
         else:
-            value = "Joe Smoe"
-            value = _f(self, value, None)
+            route = debris.CONFIG.get("objects", {})\
+                                 .get(self.__class__.__name__, {})\
+                                 .get('properties', {})\
+                                 .get(name, {})
+
+            value = None
+            if route.get('get'):
+                for r in route['get']:
+                    import redis
+                    r = redis.Redis()
+                    value = r.hget(".".join([self.__class__.__name__, str(self.id)]), name)
+                    # value = debris.services.get(r["bank"]).get(namespace)
+                    if value:
+                        break
+            
+            try:
+                value = _f(self, value, NotImplemented) if _f else value
+            except TypeError:
+                pass
             return self.__properties__.setdefault(name, value)
 
     return property(getter, setter)
