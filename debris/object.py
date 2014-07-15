@@ -136,7 +136,6 @@ class Object(type):
         # Get from Memory
         # ---------------
         for key in keys:
-
             # ---------
             # Namespace
             # ---------
@@ -146,8 +145,6 @@ class Object(type):
             # check for this namespace
             try:
                 returning_append(memory_get(namespace))
-                # got it, remove the key from fetching
-                keys.remove(key)
             except LookupError:
                 # not found, add to namespace list
                 namespaces[key] = namespace
@@ -166,9 +163,9 @@ class Object(type):
         for r in route['get']:
             if r['service'] == 'postgresql':
                 iwargs = dict([(k, args[i] if len(args) > i else None) for i, k in enumerate(insp.args[:-1])])
-                iwargs[insp.args[-1]] = keys
+                iwargs[insp.args[-1]] = namespaces.keys()
                 # create a limit, speed up the query
-                iwargs['limit'] = len(keys)
+                iwargs['limit'] = len(namespaces)
                 results = r["bank"].getmany(r['query[]'], **iwargs)
                 if results:
                     # retrieve the key from the results. hacky way, but works
@@ -201,7 +198,7 @@ class Object(type):
                         # store in memory
                         # ---------------
                         memory_set(namespace, obj)
-                        keys.remove(namespace_keys[namespace])
+                        namespaces.pop(namespace_keys.pop(namespace))
 
                         # add the constructed object
                         # --------------------------
