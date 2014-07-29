@@ -147,8 +147,8 @@ class Object(type):
                 returning_append(memory_get(namespace))
             except LookupError:
                 # not found, add to namespace list
-                namespaces[key] = namespace
-                namespace_keys[namespace] = key
+                namespaces[str(key)] = namespace
+                namespace_keys[namespace] = str(key)
 
         if not namespaces:
             # all data found, return the findings
@@ -172,7 +172,7 @@ class Object(type):
                     key = insp.args[-1]
                     # pop out the "key" for each row, ex. "id", then switch to the namespace
                     # keys[row.pop('id')] => "user.1"
-                    results = [(namespaces[row[key]], row) for row in results]
+                    results = [(namespaces[str(row[key])], row) for row in results]
 
             else:
                 results = r["bank"].getmany(namespaces.values())

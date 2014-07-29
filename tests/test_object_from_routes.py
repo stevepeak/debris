@@ -54,7 +54,7 @@ class Tests(unittest.TestCase):
                         {
                             "service": "postgresql",
                             "query": "select name, email from users where id=%(id)s limit 1;",
-                            "query[]": "select id, name, email from unnest(%(id)s) as s inner join users u on u.id=s limit %(limit)s;"
+                            "query[]": "select id, name, email from unnest(%(id)s) as s inner join users u on u.id=s::int limit %(limit)s;"
                         }
                     ],
                     "put": [
