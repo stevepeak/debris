@@ -4,7 +4,7 @@
 venv
 Watch
 build
-coverage_html_report
+htmlcov
 .noseids
 dist
 .coverage
