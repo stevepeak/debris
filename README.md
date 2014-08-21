@@ -1,4 +1,4 @@
-# :leaves: Debris [![Build Status](https://secure.travis-ci.org/stevepeak/debris.png)](http://travis-ci.org/stevepeak/debris) [![Version](https://pypip.in/v/debris/badge.png)](https://github.com/stevepeak/debris) [![codecov.io](https://codecov.io/stevepeak/debris/coverage.png)](https://codecov.io/stevepeak/debris)
+# :leaves: Debris [![Build Status](https://secure.travis-ci.org/stevepeak/debris.png)](http://travis-ci.org/stevepeak/debris) [![Version](https://pypip.in/v/debris/badge.png)](https://github.com/stevepeak/debris) [![codecov.io](https://codecov.io/github/stevepeak/debris/coverage.png)](https://codecov.io/github/stevepeak/debris)
 
 ### Install
 `pip install debris`
