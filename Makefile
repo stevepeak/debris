@@ -13,7 +13,7 @@ test:
 	. venv/bin/activate; pip uninstall -y debris
 	. venv/bin/activate; python setup.py --quiet install
 	psql debris -c "drop schema public;create schema public" -f tests/demo.sql
-	. venv/bin/activate; nosetests --with-coverage --cover-package=debris --cover-html --cover-html-dir=coverage_html_report
+	. venv/bin/activate; nosetests --with-coverage --cover-package=debris --cover-html --cover-html-dir=htmlcov
 
 update:
 	. venv/bin/activate; pip install -r requirements.txt --upgrade
